@@ -5,6 +5,7 @@ import { get, omit } from 'lodash';
 import { InputsIndex } from 'strapi-helper-plugin';
 import { useEditView } from '../../contexts/EditView';
 import InputJSONWithErrors from '../InputJSONWithErrors';
+import InputJSONCloudinary from '../InputJSONCloudinary';
 import WysiwygWithErrors from '../WysiwygWithErrors';
 
 const getInputType = (type = '') => {
@@ -95,6 +96,7 @@ function Inputs({
       inputDescription={description}
       inputStyle={inputStyle}
       customInputs={{
+        jsoncloudinary: InputJSONCloudinary,
         json: InputJSONWithErrors,
         wysiwyg: WysiwygWithErrors,
       }}
@@ -103,7 +105,11 @@ function Inputs({
       onBlur={onBlur}
       onChange={onChange}
       selectOptions={get(attribute, 'enum', [])}
-      type={getInputType(type)}
+      type={
+        type === 'json' && attribute.cloudinary
+          ? 'jsoncloudinary'
+          : getInputType(type)
+      }
       validations={validations}
       value={value}
       withOptionPlaceholder={withOptionPlaceholder}

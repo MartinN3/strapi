@@ -450,6 +450,22 @@ const attributes = {
           },
         },
         {
+          title: {
+            id: 'Cloudinary',
+          },
+          customBootstrapClass: 'col-md-12',
+          label: {
+            id: 'Cloudinary Img',
+          },
+          name: 'cloudinary',
+          type: 'checkbox',
+          value: false,
+          validations: {},
+          inputDescription: {
+            id: 'Cloudinary imggggg',
+          },
+        },
+        {
           label: {
             id: 'content-type-builder.form.attribute.item.uniqueField',
           },

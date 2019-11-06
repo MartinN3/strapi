@@ -57,6 +57,7 @@ const getTypeShape = obj => {
       return {
         required: validators.required,
         unique: validators.unique,
+        cloudinary: yup.boolean(),
       };
     }
     case 'enumeration': {

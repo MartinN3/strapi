@@ -34,9 +34,6 @@
       "model": "menu",
       "via": "restaurant"
     },
-    "categories": {
-      "collection": "category"
-    },
     "price_range": {
       "enum": [
         "very_cheap",
@@ -71,6 +68,9 @@
     },
     "address": {
       "model": "address"
+    },
+    "categories": {
+      "collection": "category"
     }
   }
 }
