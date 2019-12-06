@@ -7,6 +7,14 @@
       "config": {
         "policies": []
       }
+    },
+    {
+      "method": "GET",
+      "path": "/cloudinary-config",
+      "handler": "EnvSettings.getCloudinaryConfig",
+      "config": {
+        "policies": []
+      }
     }
   ]
 }

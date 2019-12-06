@@ -1,0 +1,8 @@
+{
+  "cloudinary": {
+    "cloudName": "sazkamobil-cms",
+    "username": "sazkamobil.cms@cleverlance.com",
+    "apiKey": "874831938391163",
+    "apiSecret": "${process.env.cloudinarySecret || WgsKwFXBwT4uvF_moLD7tDVBBEY"
+  }
+}
