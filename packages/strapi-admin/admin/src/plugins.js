@@ -29,8 +29,10 @@ module.exports = {
     .default,
   // 'strapi-plugin-documentation': require('../../../strapi-plugin-documentation/admin/src')
   //   .default,
-  // 'strapi-plugin-email': require('../../../strapi-plugin-email/admin/src')
-  //   .default,
+  'strapi-plugin-email': require('../../../strapi-plugin-email/admin/src')
+    .default,
   'strapi-plugin-upload': require('../../../strapi-plugin-upload/admin/src')
+    .default,
+  'menu-editor': require('../../../../examples/getstarted/plugins/menu-editor/admin/src')
     .default,
 };

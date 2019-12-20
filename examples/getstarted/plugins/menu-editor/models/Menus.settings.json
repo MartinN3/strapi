@@ -1,0 +1,45 @@
+{
+  "connection": "default",
+  "info": {
+    "name": "menus",
+    "description": ""
+  },
+  "attributes": {
+    "uuid": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "configurable": true
+    },
+    "index": {
+      "type": "integer",
+      "required": true,
+      "unique": false,
+      "configurable": true
+    },
+    "name": {
+      "type": "string",
+      "required": true,
+      "unique": false,
+      "configurable": true
+    },
+    "parent_uuid": {
+      "type": "integer",
+      "required": true,
+      "unique": false,
+      "configurable": true
+    },
+    "menu_uuid": {
+      "type": "string",
+      "required": true,
+      "unique": false,
+      "configurable": false
+    },
+    "page_id": {
+      "type": "string",
+      "required": false,
+      "unique": false,
+      "configurable": false
+    }
+  }
+}

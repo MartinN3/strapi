@@ -1,0 +1,44 @@
+{
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/menus",
+      "handler": "Menus.getMenus",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/menus",
+      "handler": "Menus.setMenus",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/environments",
+      "handler": "MenuEditor.getEnvironments",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/settings/:environment",
+      "handler": "MenuEditor.getSettings",
+      "config": {
+        "policies": ["plugins.menu-editor.ratelimit"]
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/settings/:environment",
+      "handler": "MenuEditor.updateSettings",
+      "config": {
+        "policies": []
+      }
+    }
+  ]
+}
