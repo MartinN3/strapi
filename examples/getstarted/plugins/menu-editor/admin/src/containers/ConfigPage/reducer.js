@@ -22,6 +22,9 @@ const initialState = fromJS({
   initialData: [],
   modifiedData: [],
   settings: [],
+  currentMenu: null,
+  initialMenusList: [],
+  modifiedMenusList: [],
   submitSuccess: false,
 });
 
@@ -30,10 +33,13 @@ function configPageReducer(state = initialState, action) {
     case GET_SETTINGS:
       return state;
     case GET_SETTINGS_SUCCEEDED:
+      console.log('GET_SETTINGS_SUCCEEDED', action);
       return (
         state
           //.update('didCheckErrors', v => (v = !v))
           //.update('formErrors', () => List([]))
+          .update('initialMenusList', () => action.initialMenusList)
+          .update('modifiedMenusList', () => action.initialMenusList)
           .update('initialData', () => action.initialData)
           .update('modifiedData', () => action.initialData)
       );
@@ -43,15 +49,15 @@ function configPageReducer(state = initialState, action) {
           //.update('didCheckErrors', v => (v = !v))
           //.update('formErrors', () => List([]))
           .update('modifiedData', () => state.get('initialData'))
+          .update('modifiedMenusList', () => state.get('initialMenusList'))
       );
     case ON_CHANGE:
       console.group('ON_CHANGE:');
-      console.log('action.value', action.value);
+      console.log('action', action);
       console.log('state:', state);
       console.groupEnd();
 
-      return state.update('modifiedData', () => action.value);
-    //return state.updateIn(action.keys, () => action.value);
+      return state.update(action.key, () => action.value);
     //case SET_ERRORS:
     //case SUBMIT_ERROR:
     //  return state
@@ -62,8 +68,10 @@ function configPageReducer(state = initialState, action) {
         state
           //.update('didCheckErrors', v => (v = !v))
           //.update('formErrors', () => List([]))
-          .update('initialData', () => action.data)
-          .update('modifiedData', () => action.data)
+          //.update('initialData', () => action.data)
+          //.update('initialData', () => action.data)
+          //.update('modifiedData', () => [])
+          //.update('menusList', () => action.menusList)
           .update('submitSuccess', v => (v = !v))
       );
     default:

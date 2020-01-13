@@ -30,6 +30,13 @@ class ConfigPage extends React.Component {
     this.getSettings();
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.currentMenu !== this.props.currentMenu) {
+      //Is currently selected menu already in database or is it all new menu?
+      this.getSettings();
+    }
+  }
+
   /**
    * Get Settings depending on the props
    * @param  {Object} props
@@ -43,6 +50,13 @@ class ConfigPage extends React.Component {
     e.preventDefault();
 
     return this.props.submit();
+  };
+
+  setMenus = newMenusList => {
+    this.setState(prevState => ({
+      ...prevState,
+      menusList: [...prevState.menusList, newMenusList],
+    }));
   };
 
   pluginHeaderActions = [
@@ -61,7 +75,6 @@ class ConfigPage extends React.Component {
   ];
 
   render() {
-    console.log('kurva', this.props.modifiedData);
     return (
       <div>
         <form onSubmit={this.handleSubmit}>
@@ -74,8 +87,11 @@ class ConfigPage extends React.Component {
             <EditForm
               didCheckErrors={this.props.didCheckErrors}
               formErrors={this.props.formErrors}
+              initialData={this.props.initialData}
               modifiedData={this.props.modifiedData}
+              currentMenu={this.props.currentMenu}
               onChange={this.props.onChange}
+              modifiedMenusList={this.props.modifiedMenusList}
             />
           </ContainerFluid>
         </form>
@@ -89,6 +105,10 @@ ConfigPage.defaultProps = {
   formErrors: [],
   settings: [],
   modifiedData: [],
+  menusList: [],
+  initialMenusList: [],
+  modifiedMenusList: [],
+  currentMenu: null,
 };
 
 ConfigPage.propTypes = {
@@ -104,6 +124,9 @@ ConfigPage.propTypes = {
   setErrors: PropTypes.func.isRequired,
   submit: PropTypes.func.isRequired,
   submitSuccess: PropTypes.bool.isRequired,
+  currentMenu: PropTypes.string,
+  initialMenusList: PropTypes.array,
+  modifiedMenusList: PropTypes.array,
 };
 
 function mapDispatchToProps(dispatch) {

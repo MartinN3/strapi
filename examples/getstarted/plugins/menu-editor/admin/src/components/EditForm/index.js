@@ -16,153 +16,168 @@ import Sortly, { ContextProvider, remove, add } from 'react-sortly';
 import { Wrapper, Item } from './Wrapper';
 import update from 'immutability-helper';
 import { Button } from 'strapi-helper-plugin';
-//import useAxios from 'axios-hooks'
-import nanoid from 'nanoid';
+import useAxios from 'axios-hooks';
+import nanoid from 'nanoid/non-secure';
 
 const EditForm = props => {
-  const { modifiedData } = props;
-  console.group('EditForm');
-  console.log('modifiedData:', modifiedData);
-  console.groupEnd();
-  const [selectedMenu] = useState('nb12jlb4');
-  //const [sourceItems, setSourceItems] = React.useState([]);
-
-  //const sourceSettings = useMemo(() => setSourceItems(convert(remapSortlyInput(modifiedData))), [])
-
-  //useEffect(() => {
-  //  const sortlyOutput = flatten(sourceItems)
-  //
-  //  const databaseInput = remapSortlyOutput(sortlyOutput, currentlyEditedMenu)
-  //
-  //  props.onChange(databaseInput);
-  //
-  //}, [sourceItems, props.onChange]);
-  //const [configKeys, setConfigKeys] = React.useState([])
-  //const [selectedMenuKey, setSelectedMenuKey] = React.useState()
-  //
-  //const [checked, setChecked] = useState([])
-  //const [{ data: sourceData, loading, error }] = useAxios(
-  //  'http://localhost:1337/categories'
-  //)
-  //
-  //if (loading) return <p>Loading...</p>
-  //if (error) return <p>Error!</p>
-  //
-  //const handleClone = (e) => {
-  //  e.preventDefault()
-  //  setSourceItems(prevItems => {
-  //    return prevItems.concat(mapDepth(checked.map(item => sourceData[item])))
-  //  })
-  //  setChecked([])
-  //}
-  //
-  //const handleCheck = (index) => {
-  //  const checkedItems = new Set(checked)
-  //
-  //  if ( checkedItems.has(index) ) {
-  //    checkedItems.delete(index)
-  //  } else {
-  //    checkedItems.add(index)
-  //  }
-  //
-  //  setChecked(Array.from(checkedItems))
-  //}
+  const {
+    initialData,
+    modifiedData,
+    currentMenu,
+    onChange,
+    modifiedMenusList,
+  } = props;
+  const [checked, setChecked] = useState([]);
 
   return (
     <Wrapper>
       <div className="row">
-        {/* <div className="col-xs-12" style={{ marginBottom: '30px' }}>
-          <Input
-            customBootstrapClass="col-md-6"
-            inputDescription={{
-              id: 'email.EditForm.Input.select.inputDescription',
+        <div className="col-xs-12">
+          <select
+            disabled={modifiedData !== initialData}
+            onChange={e => {
+              if (modifiedData !== initialData) {
+                return;
+              }
+              const { value } = e.target;
+              onChange('currentMenu', value || null);
             }}
-            inputClassName="inputStyle"
-            label={{ id: 'email.EditForm.Input.select.label' }}
-            name="menus"
-            onChange={this.props.onChange}
-            selectOptions={this.generateSelectOptions()}
-            type="select"
-            value={get(this.props.modifiedData, 'menus')}
-          />
-        </div> */}
-        {/* <div className="col-xs-12 col-md-6">
-          {sourceData.map((item, index) => (
-            <label key={index}>
-              <input
-                checked={checked.find(item => item === index)}
-                value={checked.find(item => item === index)}
-                onChange={() => handleCheck(index)} type="checkbox"
-              />
-              {item.name}
-            </label>
-          ))}
-          <button onClick={handleClone}>Vložit do menu</button>
-        </div> */}
-        <div className="col-xs-12 col-md-6">
-          {/* <select onChange={e => {
-          const keyOfCurrentlySelectedMenu = e.target.value
-          setSourceItems(props.settings[keyOfCurrentlySelectedMenu] || [])
-          setSelectedMenuKey(keyOfCurrentlySelectedMenu)
-        }}>
-          {configKeys && configKeys > 0 && configKeys.map(item => <option key={item} value={item}>{item}</option>)}
-        </select>
-        <button onClick={e => {
-          e.preventDefault()
-          setConfigKeys(prevState => prevState.concat(`menu-${nanoid(6)}`))
-        }}>Add menu</button> 
-          <h2>{selectedMenuKey}</h2>*/}
-          <DndProvider backend={HTML5Backend}>
-            <ContextProvider>
-              <MySortableTree
-                // sourceItems={[sourceItems, setSourceItems]}
-                {...{ selectedMenu }}
-                {...props}
-              />
-            </ContextProvider>
-          </DndProvider>
+            value={currentMenu}
+          >
+            <option value={''}>Vyberte menu</option>
+            {modifiedMenusList.map(item => (
+              <option key={item} value={item}>
+                {item}
+              </option>
+            ))}
+          </select>
+          <Button
+            kind="secondary"
+            disabled={modifiedData !== initialData}
+            onClick={e => {
+              e.preventDefault();
+
+              if (modifiedData !== initialData) {
+                return;
+              }
+
+              const newMenuId = nanoid(6);
+              onChange('modifiedMenusList', [...modifiedMenusList, newMenuId]);
+              onChange('currentMenu', newMenuId);
+            }}
+          >
+            Add menu
+          </Button>
         </div>
       </div>
+      {currentMenu !== '' && currentMenu !== null && (
+        <div className="row">
+          <div className="col-xs-12 col-md-6">
+            <SourceData {...{ checked, setChecked }} {...props} />
+          </div>
+          <div className="col-xs-12 col-md-6">
+            <h2>{currentMenu}</h2>
+            <DndProvider backend={HTML5Backend}>
+              <ContextProvider>
+                <MySortableTree {...{ currentMenu }} {...props} />
+              </ContextProvider>
+            </DndProvider>
+          </div>
+        </div>
+      )}
     </Wrapper>
   );
 };
 
 EditForm.defaultProps = {
+  initialData: [],
   modifiedData: [],
+  modifiedMenusList: [],
 };
 
 EditForm.propTypes = {
   didCheckErrors: PropTypes.bool.isRequired,
   formErrors: PropTypes.array.isRequired,
+  initialData: PropTypes.array,
   modifiedData: PropTypes.array,
+  modifiedMenusList: PropTypes.array,
+  currentMenu: PropTypes.string,
   onChange: PropTypes.func.isRequired,
 };
 
 export default EditForm;
 
-const MySortableTree = ({
-  onChange,
-  // sourceItems,
-  selectedMenu,
-  modifiedData,
-}) => {
-  //const [items, setItems] = sourceItems
+const SourceData = props => {
+  const [{ data: sourceData, loading, error }] = useAxios(
+    'http://localhost:1337/categories'
+  );
+  const { onChange, modifiedData, checked, setChecked, currentMenu } = props;
 
-  const handleChange = newItems => {
-    //setItems(newItems);
-    onChange(newItems);
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error!</p>;
+
+  const handleCheck = index => {
+    const checkedItems = new Set(checked);
+
+    if (checkedItems.has(index)) {
+      checkedItems.delete(index);
+    } else {
+      checkedItems.add(index);
+    }
+
+    setChecked(Array.from(checkedItems));
   };
 
+  const handleClickAdd = () => {
+    const newItem = checked.map(itemIndex => ({
+      id: nanoid(10),
+      name: sourceData[itemIndex] && sourceData[itemIndex].name,
+      menu_uuid: currentMenu,
+    }));
+
+    onChange('modifiedData', add(modifiedData, newItem));
+
+    setChecked([]);
+  };
+
+  return (
+    <>
+      <div className="row">
+        {sourceData.map((item, index) => (
+          <label key={index}>
+            <input
+              checked={checked.find(item => item === index)}
+              value={checked.find(item => item === index)}
+              onChange={() => handleCheck(index)}
+              type="checkbox"
+            />
+            {item.name}
+          </label>
+        ))}
+      </div>
+      <div className="row">
+        <Button kind="secondary" onClick={handleClickAdd}>
+          Add New Item
+        </Button>
+      </div>
+    </>
+  );
+};
+
+SourceData.propTypes = {
+  modifiedData: PropTypes.array,
+  onChange: PropTypes.func.isRequired,
+  currentMenu: PropTypes.string.isRequired,
+  checked: PropTypes.array.isRequired,
+  setChecked: PropTypes.func.isRequired,
+};
+
+const MySortableTree = ({ onChange, currentMenu, modifiedData }) => {
   const handleChangeRow = (id, target) => {
-    //const index = items.findIndex(item => item.id === id);
     const index = modifiedData.findIndex(item => item.id === id);
     const { name, value } = target;
-    //setItems(
-    //  update(items, {
-    //    [index]: { [name]: { $set: value } },
-    //  })
-    //);
     onChange(
+      'modifiedData',
       update(modifiedData, {
         [index]: { [name]: { $set: value } },
       })
@@ -170,43 +185,40 @@ const MySortableTree = ({
   };
 
   const handleDelete = id => {
-    //const index = items.findIndex(item => item.id === id);
     const index = modifiedData.findIndex(item => item.id === id);
-    //setItems(remove(items, index));
-    onChange(remove(modifiedData, index));
+    onChange('modifiedData', remove(modifiedData, index));
   };
 
   const handleClickAdd = () => {
-    //setItems(
-    //  add(items, {
-    //    id: nanoid(8),
-    //    name: '',
-    //  })
-    //);
     onChange(
+      'modifiedData',
       add(modifiedData, {
         id: nanoid(8),
         name: '',
-        menu_uuid: selectedMenu,
+        menu_uuid: currentMenu,
       })
     );
   };
 
   return (
     <>
-      <Sortly
-        items={modifiedData}
-        id={selectedMenu}
-        name={selectedMenu}
-        onChange={handleChange}
-      >
-        {props => (
-          <ItemRenderer {...{ handleDelete, handleChangeRow }} {...props} />
-        )}
-      </Sortly>
-      <Button variant="outlined" onClick={handleClickAdd}>
-        Add New Item
-      </Button>
+      <div className="row">
+        <Sortly
+          items={modifiedData}
+          id={currentMenu}
+          name={currentMenu}
+          onChange={values => onChange('modifiedData', values)}
+        >
+          {props => (
+            <ItemRenderer {...{ handleDelete, handleChangeRow }} {...props} />
+          )}
+        </Sortly>
+      </div>
+      <div className="row">
+        <Button kind="secondary" onClick={handleClickAdd}>
+          Add New Item
+        </Button>
+      </div>
     </>
   );
 };
@@ -220,7 +232,7 @@ MySortableTree.propTypes = {
   formErrors: PropTypes.array.isRequired,
   modifiedData: PropTypes.array,
   onChange: PropTypes.func.isRequired,
-  selectedMenu: PropTypes.string.isRequired,
+  currentMenu: PropTypes.string.isRequired,
 };
 
 const ItemRenderer = props => {
@@ -245,7 +257,9 @@ const ItemRenderer = props => {
   return (
     <Item ref={ref} style={{ marginLeft: depth * 20 }} key={id}>
       <input value={name} name="name" onChange={handleChangeInput} />
-      <Button onClick={() => handleDelete(id)}>X</Button>
+      <Button kind="secondary" onClick={() => handleDelete(id)}>
+        Smazat
+      </Button>
     </Item>
   );
 };

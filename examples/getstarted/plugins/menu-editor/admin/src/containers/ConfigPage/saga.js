@@ -1,9 +1,13 @@
 // import { LOCATION_CHANGE } from 'react-router-redux';
 import { call, fork, put, select, takeLatest } from 'redux-saga/effects';
 import { request } from 'strapi-helper-plugin';
-import { getSettingsSucceeded, submitSucceeded } from './actions';
+import { getSettingsSucceeded, getSettings } from './actions';
 import { GET_SETTINGS, SUBMIT } from './constants';
-import { makeSelectModifiedData } from './selectors';
+import {
+  makeSelectModifiedData,
+  makeSelectCurrentMenu,
+  makeSelectInitialMenusList,
+} from './selectors';
 import pluginId from '../../pluginId';
 import { flatten, convert } from 'react-sortly';
 
@@ -49,36 +53,80 @@ const remapSortlyOutput = sortlyOutput => {
 
 export function* settingsGet() {
   try {
-    const requestURL = `/${pluginId}/menus`;
-    const response = yield call(request, requestURL, { method: 'GET' });
+    const menusListResponse = yield call(request, `/${pluginId}/list-menus`, {
+      method: 'GET',
+    });
+    const initialMenusList = menusListResponse.map(item => item['menu_uuid']);
 
-    yield put(getSettingsSucceeded(convert(remapSortlyInput(response))));
+    const currentMenu = yield select(makeSelectCurrentMenu());
+
+    const isCurrentMenuInDatabase = Boolean(
+      initialMenusList.find(item => item === currentMenu)
+    );
+
+    const initialDataRequest = {
+      url: `/${pluginId}`,
+      params: {
+        menu_uuid: currentMenu,
+      },
+    };
+
+    //If its in database, fetch it
+    if (currentMenu === null || isCurrentMenuInDatabase) {
+      const initialDataResponse = yield call(request, initialDataRequest.url, {
+        method: 'GET',
+        params: initialDataRequest.params,
+      });
+
+      yield put(
+        getSettingsSucceeded({
+          initialData: convert(remapSortlyInput(initialDataResponse)),
+          initialMenusList,
+        })
+      );
+    } else {
+      yield put(
+        getSettingsSucceeded({
+          initialData: [],
+        })
+      );
+    }
   } catch (err) {
     strapi.notification.error('notification.error');
   }
 }
 
 export function* submit() {
+  //const initialData = yield select(makeSelectInitialData())
+
+  //function difference(setA, setB) {
+  //  let _difference = new Set(setA)
+  //  for (let elem of setB) {
+  //      _difference.delete(elem)
+  //  }
+  //  return _difference
+  //}
+
+  //const CH = difference(new Set(modifiedData), new Set(initialData))
+  //const R = initialData.filter(item => {
+  //  const rowidMapInitialData = new Set(initialData.map(item => item.rowid))
+  //  const rowidMapModifiedData = new Set(modifiedData.map(item => item.rowid))
+  //  return difference(rowidMapInitialData, rowidMapModifiedData).has(item.rowid)
+  //})
+
   try {
+    const modifiedData = yield select(makeSelectModifiedData());
     // const env = yield select(makeSelectEnv());
-    let body = yield select(makeSelectModifiedData());
-    body = remapSortlyOutput(flatten(body));
+    let body = remapSortlyOutput(flatten(modifiedData));
 
-    console.group('SAGA SUBMIT body:');
-    console.log(body);
-    console.groupEnd();
-
-    const requestURL = `/${pluginId}/menus`;
-    const response = yield call(request, requestURL, { method: 'PUT', body });
+    const requestURL = `/${pluginId}`;
+    yield call(request, requestURL, { method: 'PUT', body });
 
     // Update reducer with optimisticResponse
     strapi.notification.success('email.notification.config.success');
 
-    console.group('SAGA SUBMIT Succeeded body:');
-    console.log(convert(remapSortlyInput(response)));
-    console.groupEnd();
-
-    yield put(submitSucceeded(convert(remapSortlyInput(response))));
+    //yield put(submitSucceeded(convert(remapSortlyInput(response))));
+    yield put(getSettings());
   } catch (err) {
     strapi.notification.error('notification.error');
     // TODO handle error PUT

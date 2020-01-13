@@ -22,10 +22,11 @@ export function getSettings() {
   };
 }
 
-export function getSettingsSucceeded(initialData) {
+export function getSettingsSucceeded({ initialData, initialMenusList }) {
   return {
     type: GET_SETTINGS_SUCCEEDED,
     initialData,
+    initialMenusList,
   };
 }
 
@@ -35,10 +36,11 @@ export function onCancel() {
   };
 }
 
-export function onChange(menuRows) {
+export function onChange(key, value) {
   return {
     type: ON_CHANGE,
-    value: menuRows,
+    key,
+    value,
   };
 }
 

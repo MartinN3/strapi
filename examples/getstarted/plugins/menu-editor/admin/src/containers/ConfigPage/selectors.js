@@ -17,17 +17,34 @@ const selectConfigPage = () =>
     substate => substate.toJS()
   );
 
+const makeSelectInitialData = () =>
+  createSelector(
+    selectConfigPageDomain(),
+    substate => substate.get('initialData')
+  );
+
+const makeSelectInitialMenusList = () =>
+  createSelector(
+    selectConfigPageDomain(),
+    substate => substate.get('initialMenusList')
+  );
+
 const makeSelectModifiedData = () =>
   createSelector(
     selectConfigPageDomain(),
-    substate => {
-      console.group('Selectors makeSelectModifiedData:');
-      //console.log('substate', substate)
-      console.log('modified data to JS', substate.get('modifiedData'));
-      console.groupEnd();
-      return substate.get('modifiedData');
-    }
+    substate => substate.get('modifiedData')
+  );
+
+const makeSelectCurrentMenu = () =>
+  createSelector(
+    selectConfigPageDomain(),
+    substate => substate.get('currentMenu')
   );
 
 export default selectConfigPage;
-export { makeSelectModifiedData };
+export {
+  makeSelectModifiedData,
+  makeSelectInitialData,
+  makeSelectCurrentMenu,
+  makeSelectInitialMenusList,
+};
