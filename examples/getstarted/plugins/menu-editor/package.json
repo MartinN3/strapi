@@ -18,17 +18,10 @@
     "use-debounce": "^3.1.0"
   },
   "author": {
-    "name": "A Strapi developer",
+    "name": "martinn3",
     "email": "",
-    "url": ""
+    "url": "https://github.com/MartinN3"
   },
-  "maintainers": [
-    {
-      "name": "A Strapi developer",
-      "email": "",
-      "url": ""
-    }
-  ],
   "engines": {
     "node": ">=10.0.0",
     "npm": ">=6.0.0"

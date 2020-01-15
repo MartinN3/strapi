@@ -15,9 +15,10 @@ import HTML5Backend from 'react-dnd-html5-backend';
 import Sortly, { ContextProvider, remove, add } from 'react-sortly';
 import { Wrapper, Item } from './Wrapper';
 import update from 'immutability-helper';
-import { Button } from 'strapi-helper-plugin';
+import { Button, InputCheckbox } from 'strapi-helper-plugin';
 import useAxios from 'axios-hooks';
 import nanoid from 'nanoid/non-secure';
+import { FormattedMessage } from 'react-intl';
 
 const EditForm = props => {
   const {
@@ -44,7 +45,9 @@ const EditForm = props => {
             }}
             value={currentMenu}
           >
-            <option value={''}>Vyberte menu</option>
+            <FormattedMessage id={'menu-editor.EditForm.chooseMenu'}>
+              {message => <option value={''}>{message}</option>}
+            </FormattedMessage>
             {modifiedMenusList.map(item => (
               <option key={item} value={item}>
                 {item}
@@ -66,7 +69,7 @@ const EditForm = props => {
               onChange('currentMenu', newMenuId);
             }}
           >
-            Add menu
+            <FormattedMessage id={'menu-editor.EditForm.addNewMenu'} />
           </Button>
         </div>
       </div>
@@ -144,20 +147,22 @@ const SourceData = props => {
     <>
       <div className="row">
         {sourceData.map((item, index) => (
-          <label key={index}>
-            <input
-              checked={checked.find(item => item === index)}
-              value={checked.find(item => item === index)}
-              onChange={() => handleCheck(index)}
-              type="checkbox"
-            />
-            {item.name}
-          </label>
+          <InputCheckbox
+            key={index}
+            checked={checked.find(item => item === index)}
+            value={checked.find(item => item === index)}
+            onChange={() => handleCheck(index)}
+            message={item.name}
+            //message="Check me"
+            //name="checkbox"
+            //onChange={({ target }) => setValue(target.value)}
+            //value={value}
+          />
         ))}
       </div>
       <div className="row">
         <Button kind="secondary" onClick={handleClickAdd}>
-          Add New Item
+          <FormattedMessage id={'menu-editor.EditForm.add'} />
         </Button>
       </div>
     </>
@@ -216,7 +221,7 @@ const MySortableTree = ({ onChange, currentMenu, modifiedData }) => {
       </div>
       <div className="row">
         <Button kind="secondary" onClick={handleClickAdd}>
-          Add New Item
+          <FormattedMessage id={'menu-editor.EditForm.add'} />
         </Button>
       </div>
     </>
@@ -256,9 +261,11 @@ const ItemRenderer = props => {
 
   return (
     <Item ref={ref} style={{ marginLeft: depth * 20 }} key={id}>
+      {/* InputText prop `name` sets ID and NAME without possibility to override it */}
       <input value={name} name="name" onChange={handleChangeInput} />
       <Button kind="secondary" onClick={() => handleDelete(id)}>
-        Smazat
+        {''}
+        <FormattedMessage id={'menu-editor.EditForm.remove'} />
       </Button>
     </Item>
   );

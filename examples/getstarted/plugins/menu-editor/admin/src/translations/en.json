@@ -1,5 +1,8 @@
 {
-  "ConfigPage.description": "Configure the menu plugin",
-  "ConfigPage.title": "Menu - Settings",
-  "HomePage.title": "HomePage - Dashboard"
+  "ConfigPage.description": "Edit menus here",
+  "ConfigPage.title": "Menu - Editor",
+  "EditForm.remove": "Remove",
+  "EditForm.add": "Add",
+  "EditForm.addNewMenu": "Add new menu",
+  "EditForm.chooseMenu": "Choose menu"
 }
