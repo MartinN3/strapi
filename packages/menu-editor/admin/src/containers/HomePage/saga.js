@@ -1,10 +1,10 @@
 import { call, fork, put, select, takeLatest } from 'redux-saga/effects';
 import { request } from 'strapi-helper-plugin';
+import { flatten, convert } from 'react-sortly';
 import { getMenuSucceeded } from './actions';
 import { GET_MENU, SUBMIT } from './constants';
 import { SelectMenuItemsData } from './selectors';
 import pluginId from '../../pluginId';
-import { flatten, convert } from 'react-sortly';
 import { remapSortlyInput, remapSortlyOutput } from '../../utils/RemapSortlyData';
 
 const sourceMenuEndpoint = `/${pluginId}/source-menu`;

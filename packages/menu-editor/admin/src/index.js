@@ -7,7 +7,7 @@
 
 import pluginPkg from '../../package.json';
 import pluginLogo from './assets/images/logo.svg';
-//mport layout from '../../config/layout';
+// mport layout from '../../config/layout';
 import pluginId from './pluginId';
 import App from './containers/App';
 import Initializer from './containers/Initializer';
@@ -26,7 +26,7 @@ export default strapi => {
     initializer: Initializer,
     injectedComponents: [],
     isRequired: pluginPkg.strapi.required || false,
-    //layout,
+    // layout,
     lifecycles,
     leftMenuLinks: [],
     leftMenuSections: [],
