@@ -1,0 +1,3 @@
+[submodule "packages/strapi-plugin-deploy"]
+	path = packages/strapi-plugin-deploy
+	url = https://github.com/MartinN3/strapi-plugin-deploy.git
